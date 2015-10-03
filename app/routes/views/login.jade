@@ -1,11 +1,22 @@
 doctype html
 html
-    head
-        title Login
-    body
-        form.login(method="post", action="/@/login")
-            input(type="text", name="username")
-            br
-            input(type="password", name="password")
-            br
-            input(type="submit")
+	head
+		title Login - Chat4Friends
+		meta(charset="utf-8")
+		meta(http-equiv="X-UA-Compatible", content="IE=edge")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
+		link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css", rel="stylesheet")
+		link(rel="stylesheet", type="text/css", href="style.css")
+	body
+		.col-sm-offset-3.col-sm-6.mt-xl
+			img.logo(src="/res/logo.png")
+			.well.loginWell
+				form.login(method="post", action="/@/login")
+					.form-group
+						label Username
+						input.form-control(type="text", placeholder="Username", name="username")
+					.form-group
+						label Password
+						input.form-control(type="password", placeholder="Password", name="password")
+					input.btn.btn-success(type="submit")

@@ -18,11 +18,19 @@ socket.on("total_clients", function (clients) {
 	$(".connectedClients").html(clients);
 });
 
-socket.on("new_message", function (message) {
-	var messageHtml = "<div class='from-them'><p>" + message + "</p></div><div class='clearfix'></div>";
+socket.on("new_message", function (data) {
+	var message = data.msg;
+	var emitter = data.emitter;
+	var messageHtml = "<div class='messageWrapper'>" +
+							"<img class='emitter' src='/imgs/" + emitter + ".jpg'>" + 
+							"<div class='username'>" + emitter + "</div>" +
+							"<div class='from-them'><p>" + message + "</p></div>" +
+							"<div class='clearfix'></div>" +
+					   "</div>";
 	$(".well").append(messageHtml);
 	$('.well').animate({scrollTop: $('.well').prop("scrollHeight")}, 50);
 	if (visibility === "hidden") {
+		$("title").html("[New] - Chat4Friends");
         var audio = new Audio("/res/notification_sound.mp3");
         audio.play();
     }
@@ -37,6 +45,18 @@ socket.on("has_stopped_typing", function () {
 });
 
 $(document).ready(function () {
+
+	$(".logout").click(function () {
+		makeAjaxRequest({
+			operation: "/@/logout",
+			data: {}
+		}, function (err, data) {
+			if (err)
+				return alert(err);
+			window.location = "/";
+		});
+	});
+
 	$(document).keypress(function (e) {
 		if (e.keyCode === 13) {
 			e.preventDefault();
@@ -80,6 +100,8 @@ $(document).ready(function () {
         } else {
             visibility = this[hidden] ? "hidden" : "visible";
         }
+        if (visibility === 'visible')
+        	$("title").html("Chat4Friends");
     }
 
     // set the initial state (but only if browser supports the Page Visibility API)
@@ -111,4 +133,32 @@ function sendMessage () {
 	var messageHtml = "<div class='from-me'><p>" + message + "</p></div><div class='clearfix'></div>";
 	$(".well").append(messageHtml);
 	$('.well').animate({scrollTop: $('.well').prop("scrollHeight")}, 500);
+}
+
+function makeAjaxRequest (ajaxObj, callback) {
+    $.ajax({
+        url: ajaxObj.operation,
+        type: ajaxObj.method || "POST",
+        data: ajaxObj.data || {},
+        error: function(jqXHR, exception) {
+            if (jqXHR.status === 0) {
+                callback('Not connect. Verify Network.' + jqXHR.responseText);
+            } else if (jqXHR.status == 404) {
+                callback('Requested page not found. [404].' + jqXHR.responseText);
+            } else if (jqXHR.status == 500) {
+                callback('Internal Server Error [500].' + jqXHR.responseText);
+            } else if (exception === 'parsererror') {
+                callback('Requested JSON parse failed.');
+            } else if (exception === 'timeout') {
+                callback('Time out error.');
+            } else if (exception === 'abort') {
+                callback('Ajax request aborted.');
+            } else {
+                callback('Uncaught Error.\n' + jqXHR.responseText);
+            }
+        },
+        success: function (data) {
+            callback(null, data);
+        }
+    });
 }

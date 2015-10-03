@@ -42,6 +42,14 @@ config.operations = {
             access: {
                 roles: ["visitator"]
             }
+        },
+        logout: {
+            url: "/logout",
+            method: "post",
+            path: "login/loginController.js",
+            access: {
+                roles: ["user"]
+            }
         }
     }
 }

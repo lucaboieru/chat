@@ -3,10 +3,14 @@ exports.message = function (args, socket, s) {
 	var host = socket.request.headers.host;
 	var path = socket.request.headers.referer;
 	path = path.slice(path.indexOf(host) + host.length);
-
+	var session = socket.conn.request.session.login || {};
+	var emitter = session.user || null;
 	var sockets = s.sockets[path];
 	
-	sockets.emit("new_message", socket.id, args);
+	sockets.emit("new_message", socket.id, {
+		emitter: emitter,
+		msg: args
+	});
 };
 
 exports.typing = function (args, socket, s) {
