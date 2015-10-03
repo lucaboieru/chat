@@ -22,6 +22,14 @@ function handleEvent (event, args, config, socket) {
     event_cache[event](args, socket, s);
 }
 
+function emitToRoom (event, emitterId, args) {
+    // emit to all players
+    for (var player in this.players) {
+        if (player === emitterId) continue;
+        s.io.to(player).emit(event, args);
+    }
+}
+
 module.exports = function (core) {
     var io = core.s.io;
     s = core.s;
@@ -36,10 +44,33 @@ module.exports = function (core) {
         for (var route in config.routes) {
             var reg = new RegExp(config.routes[route].reg);
             if (path.match(reg)) {
-                if (!s.sockets[route]) {
-                    s.sockets[route] = [];
+                if (!s.sockets[path]) {
+                    s.sockets[path] = {
+                        status: "opened",
+                        path: path
+                    };
                 }
-                s.sockets[route].push(socket.id);
+
+                s.sockets[path].players = s.sockets[path].players || {};
+
+                // room status must be 'opened'
+                if (s.sockets[path].status === "opened") {
+
+                    // add client
+                    s.sockets[path].players[socket.id] = {
+                        id: socket.id,
+                        emit: function (event, args) {
+                            s.io.to(socket.id).emit(event, args);
+                        }
+                    };
+
+                    // add emit function
+                    s.sockets[path].emit = emitToRoom;
+
+                    // emit new client
+                    socket.emit("total_clients", Object.keys(s.sockets[path].players).length);
+                    s.sockets[path].emit("new_client", socket.id, Object.keys(s.sockets[path].players).length);
+                }
             }
         }
 

@@ -3,7 +3,7 @@ var mongo = require("../../lib/mongo");
 exports.findUser = function (user, callback) {
 
 	// fetch db object
-	mongo.connect("source", function (err, db) {
+	mongo.connect("chat", function (err, db) {
 
 		// handle error
 		if (err) {

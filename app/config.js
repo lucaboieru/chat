@@ -35,14 +35,6 @@ config.routes = {
 config.operations = {
     apiKey: "/@",
     apis: {
-        getExample: {
-            url: "/getExample",
-            method: "post",
-            path: "exampleController/controller.js",
-            access: {
-                roles: ["user"]
-            }
-        },
         login: {
             url: "/login",
             method: "post",
@@ -53,6 +45,21 @@ config.operations = {
         }
     }
 }
+
+config.events = {
+    message: {
+        path: "chat/events.js"
+    },
+    typing: {
+        path: "chat/events.js"
+    },
+    stopped_typing: {
+        path: "chat/events.js"
+    },
+    disconnect: {
+        path: "chat/events.js"
+    }
+};
 
 if (PRODUCTION) {
     config.express.ip = "0.0.0.0";
