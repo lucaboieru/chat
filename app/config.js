@@ -21,6 +21,15 @@ config.routes = {
             redirect: "/login"
         }
     },
+    room: {
+        reg: "^/r/[^/]+/*$",
+        path: "routes/views/home.html",
+        access: {
+            roles: ["user"],
+            fail: "redirect",
+            redirect: "/login"
+        }
+    },
     login: {
         reg: "/login",
         path: "routes/views/login.jade",

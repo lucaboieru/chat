@@ -47,7 +47,7 @@ exports.disconnect = function (args, socket, s) {
 
 		if (s.sockets[path].players && s.sockets[path].players[socket.id]) {
 
-			s.sockets[path].emit("client_left");
+			s.sockets[path].emit("client_left", socket.id, Object.keys(s.sockets[path].players).length);
 
 			delete s.sockets[path].players[socket.id];
 
