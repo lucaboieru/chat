@@ -16,9 +16,9 @@ config.routes = {
         reg: "^/*$",
         path: "routes/views/home.html",
         access: {
-            roles: ["user"],
+            roles: ["admin"],
             fail: "redirect",
-            redirect: "/login"
+            redirect: "/@/logout"
         }
     },
     room: {

@@ -8,8 +8,8 @@ exports.login = function (source) {
     }
 
     // get username and password
-    var username = source.data.username;
-    var password = source.data.password;
+    var username = source.data.username.toString();
+    var password = source.data.password.toString();
 
     // find user
     model.findUser({
