@@ -34,6 +34,9 @@ module.exports = function (core) {
     var io = core.s.io;
     s = core.s;
 
+    // init the room matching queue
+    s.matchQueue = [];
+
     // listen for connections
     io.on('connection', function (socket) {
         var host = socket.request.headers.host;
