@@ -178,7 +178,7 @@ body {
 	position: relative;
 	padding: 5px 10px;
 	color: white;
-	background: #0B93F6;
+	background: rgb(212, 95, 104);
 	border-radius: 17px;
 	float: right;
 	z-index: 0;
@@ -191,7 +191,7 @@ body {
 	bottom: -2px;
 	right: -7px;
 	height: 20px;
-	border-right: 20px solid #0B93F6;
+	border-right: 20px solid rgb(212, 95, 104);
 	border-bottom-left-radius: 16px 14px;
 	-webkit-transform: translate(0, -2px);
 }
