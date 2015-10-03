@@ -22,7 +22,7 @@ socket.on("new_message", function (data) {
 	var message = data.msg;
 	var emitter = data.emitter;
 	var messageHtml = "<div class='messageWrapper'>" +
-							"<img class='emitter' src='/imgs/" + emitter + ".jpg'>" + 
+							"<div class='emitter' style='background-image: url(/imgs/" + emitter + ".jpg);'></div>" + 
 							"<div class='username'>" + emitter + "</div>" +
 							"<div class='from-them'><p>" + message + "</p></div>" +
 							"<div class='clearfix'></div>" +

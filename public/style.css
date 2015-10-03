@@ -140,11 +140,14 @@ body {
 .emitter {
 	border-radius: 50%;
 	width: 30px;
+	height: 30px;
 	float: left;
 	z-index: 1000;
 	position: absolute;
 	bottom: 5px;
 	left: 0px;
+	background-size: cover;
+	background-position: center;
 }
 
 .username {
