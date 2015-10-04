@@ -4,18 +4,26 @@ var typingWait;
 
 var visibility = "";
 
-socket.on("new_client", function (clients) {
-	$(".well").append("<p class='info'>A friend connected!</p>");
-	$(".connectedClients").html(clients);
+socket.on("new_client", function (client) {
+	$(".well").append("<p class='info'>" + client + " connected.</p>");
 });
 
-socket.on("client_left", function (clients) {
-	$(".well").append("<p class='info'>A friend left!</p>");
-	$(".connectedClients").html(clients);
+socket.on("client_left", function (client) {
+	$(".well").append("<p class='info'>" + client + " left.</p>");
 });
 
 socket.on("total_clients", function (clients) {
-	$(".connectedClients").html(clients);
+	$(".connectedClients").html(clients.length);
+
+    // empty list
+    $(".userList .userItem:not(.userTemplate)").remove();
+
+    for (var i = 0; i < clients.length; ++ i) {
+        var $temp = $(".userTemplate").clone().show().removeClass("userTemplate");
+        $temp.find(".listUsername").html(clients.arr[i]);
+        $temp.find(".listImg").css("background-image", "url(/imgs/" + clients.arr[i] + ".jpg)");
+        $(".userList").append($temp);
+    }
 });
 
 socket.on("new_message", function (data) {

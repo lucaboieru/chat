@@ -30,23 +30,33 @@
 </head>
 <body>
 	<div class="container mt-l">
-		<div class="col-sm-offset-3 col-sm-6">
+		<div class="col-sm-offset-2 col-sm-8">
 			<div class="row">
 				<img src="/res/logo.png" class="logo">
 				<div class="logout">
 					<i class="fa fa-power-off"></i>
 				</div>
 			</div>
-		</div>
-		<div class="well messageContainer col-sm-offset-3 col-sm-6">
-			<i class="info isTyping notShown">Someone is typing...</i>
-			<p class='info'>Welcome!</p>
-		</div>
-		<div class="clearfix"></div>
-		<div class="controls col-sm-offset-3 col-sm-6">
 			<div class="row">
-				<textarea class="form-control col-xs-8 messageTextarea" placeholder="Type to chat..."></textarea>
-				<p class="connectionStatus">Connected friends: <span class="connectedClients"></span></p>
+				<div class="col-sm-4 onlineList">
+					<div class="row">
+						<div class="connectionStatus">
+							Online (<span class="connectedClients"></span>)
+						</div>
+						<div class="userList">
+							<div class="userItem userTemplate notShown">
+								<div class="listImg"></div>
+								<span class="listUsername"></span>
+								<div class="clearfix"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="well messageContainer col-sm-8">
+					<i class="info isTyping notShown">Someone is typing...</i>
+					<p class='info'>Welcome!</p>
+				</div>
+				<textarea class="col-sm-8 messageTextarea" placeholder="Type to chat..."></textarea>
 			</div>
 		</div>
 	</div>

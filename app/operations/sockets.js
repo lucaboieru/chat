@@ -59,9 +59,14 @@ module.exports = function (core) {
                 // room status must be 'opened'
                 if (s.sockets[path].status === "opened") {
 
+                    // emit new client
+                    var session = socket.conn.request.session.login || {};
+                    var emitter = session.user || null;
+
                     // add client
                     s.sockets[path].players[socket.id] = {
                         id: socket.id,
+                        username: emitter,
                         emit: function (event, args) {
                             s.io.to(socket.id).emit(event, args);
                         }
@@ -70,9 +75,12 @@ module.exports = function (core) {
                     // add emit function
                     s.sockets[path].emit = emitToRoom;
 
-                    // emit new client
-                    socket.emit("total_clients", Object.keys(s.sockets[path].players).length);
-                    s.sockets[path].emit("new_client", socket.id, Object.keys(s.sockets[path].players).length);
+                    var arr = [];
+                    Object.keys(s.sockets[path].players).forEach(function (item) {
+                        arr.push(s.sockets[path].players[item].username);
+                    });
+                    s.sockets[path].emit("total_clients", null, { length: Object.keys(s.sockets[path].players).length, arr: arr});
+                    s.sockets[path].emit("new_client", socket.id, s.sockets[path].players[socket.id].username);
                 }
             }
         }
