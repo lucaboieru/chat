@@ -182,6 +182,12 @@ body {
     text-align: center;
 }
 
+.isTyping {
+	position: absolute;
+	bottom: 55px;
+	left: 35%;
+}
+
 .well p {
     margin: 0 !important;
 }
@@ -255,8 +261,8 @@ body {
 	position: absolute;
 	z-index: 1;
 	bottom: -2px;
-	right: -56px;
-	width: 26px;
+	right: -48px;
+	width: 18px;
 	height: 20px;
 	background: #ffffff;
 	border-bottom-left-radius: 10px;

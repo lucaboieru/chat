@@ -9,14 +9,34 @@ html
 		link(href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css", rel="stylesheet")
 		link(rel="stylesheet", type="text/css", href="style.css")
 	body
-		.col-sm-offset-3.col-sm-6.mt-xl
-			img.logo(src="/res/logo.png")
-			.well.loginWell
-				form.login(method="post", action="/@/login")
-					.form-group
-						label Username
-						input.form-control(type="text", placeholder="Username", name="username")
-					.form-group
-						label Password
-						input.form-control(type="password", placeholder="Password", name="password")
-					input.btn.btn-success(type="submit")
+		.container
+			.col-sm-offset-2.col-sm-8.mt-xl
+				img.logo(src="/res/logo.png")
+				.well.loginWell
+					.col-sm-6
+						h3 Login
+						form.login(method="post", action="/@/login")
+							.form-group
+								label Username
+								input.form-control(type="text", placeholder="Username", name="username", required)
+							.form-group
+								label Password
+								input.form-control(type="password", placeholder="Password", name="password", required)
+							input.btn.btn-success.form-control(type="submit", value="Login")
+					.col-sm-6
+						h3 Register
+						form.login(method="post", action="/@/register", enctype="multipart/form-data")
+							.form-group
+								label Username
+								input.form-control(type="text", placeholder="Username", name="username", required)
+							.form-group
+								label Password
+								input.form-control(type="password", placeholder="Password", name="password", required)
+							.form-group
+								label Confirm Password
+								input.form-control(type="password", placeholder="Password", name="confirmPassword", required)
+							.form-group
+								label Profile Image
+								input.form-control(type="file", name="image", required)
+							input.btn.btn-primary.form-control(type="submit", value="Register")
+					.clearfix

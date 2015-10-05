@@ -59,7 +59,15 @@ config.operations = {
             access: {
                 roles: ["user"]
             }
-        }
+        },
+        register: {
+            url: "/register",
+            method: "post",
+            path: "login/loginController.js",
+            access: {
+                roles: ["visitator"]
+            }
+        },
     }
 }
 

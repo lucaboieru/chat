@@ -6,10 +6,12 @@ var visibility = "";
 
 socket.on("new_client", function (client) {
 	$(".well").append("<p class='info'>" + client + " connected.</p>");
+    $('.well').stop().animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
 });
 
 socket.on("client_left", function (client) {
 	$(".well").append("<p class='info'>" + client + " left.</p>");
+    $('.well').stop().animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
 });
 
 socket.on("total_clients", function (clients) {
@@ -36,7 +38,7 @@ socket.on("new_message", function (data) {
 							"<div class='clearfix'></div>" +
 					   "</div>";
 	$(".well").append(messageHtml);
-	$('.well').animate({scrollTop: $('.well').prop("scrollHeight")}, 50);
+	$('.well').animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
 	if (visibility === "hidden") {
 		$("title").html("[New] - Chat4Friends");
         var audio = new Audio("/res/notification_sound.mp3");
@@ -45,7 +47,7 @@ socket.on("new_message", function (data) {
 });
 
 socket.on("is_typing", function () {
-	$(".well").append($(".isTyping").show());
+	$(".isTyping").show();
 });
 
 socket.on("has_stopped_typing", function () {
@@ -140,7 +142,7 @@ function sendMessage () {
 	
 	var messageHtml = "<div class='from-me'><p>" + message + "</p></div><div class='clearfix'></div>";
 	$(".well").append(messageHtml);
-	$('.well').animate({scrollTop: $('.well').prop("scrollHeight")}, 500);
+	$('.well').stop().animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
 }
 
 function makeAjaxRequest (ajaxObj, callback) {
