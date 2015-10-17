@@ -79,7 +79,7 @@ module.exports = function (core) {
                     Object.keys(s.sockets[path].players).forEach(function (item) {
                         arr.push(s.sockets[path].players[item].username);
                     });
-                    s.sockets[path].emit("total_clients", null, { length: Object.keys(s.sockets[path].players).length, arr: arr});
+                    s.sockets[path].emit("total_clients", null, arr);
                     s.sockets[path].emit("new_client", socket.id, s.sockets[path].players[socket.id].username);
                 }
             }

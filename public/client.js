@@ -1,62 +1,5 @@
-var socket = io();
-var typing = false;
-var typingWait;
-
-var visibility = "";
-
-socket.on("new_client", function (client) {
-	$(".well").append("<p class='info'>" + client + " connected.</p>");
-    $('.well').stop().animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
-});
-
-socket.on("client_left", function (client) {
-	$(".well").append("<p class='info'>" + client + " left.</p>");
-    $('.well').stop().animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
-});
-
-socket.on("total_clients", function (clients) {
-	$(".connectedClients").html(clients.length);
-
-    // empty list
-    $(".userList .userItem:not(.userTemplate)").remove();
-
-    for (var i = 0; i < clients.length; ++ i) {
-        var $temp = $(".userTemplate").clone().show().removeClass("userTemplate");
-        $temp.find(".listUsername").html(clients.arr[i]);
-        $temp.find(".listImg").css("background-image", "url(/imgs/" + clients.arr[i] + ".jpg)");
-        $(".userList").append($temp);
-    }
-});
-
-socket.on("new_message", function (data) {
-	var message = data.msg;
-	var emitter = data.emitter;
-	var messageHtml = "<div class='messageWrapper'>" +
-							"<div class='emitter' style='background-image: url(/imgs/" + emitter + ".jpg);'></div>" + 
-							"<div class='username'>" + emitter + "</div>" +
-							"<div class='from-them'><p>" + message + "</p></div>" +
-							"<div class='clearfix'></div>" +
-					   "</div>";
-	$(".well").append(messageHtml);
-	$('.well').animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
-	if (visibility === "hidden") {
-		$("title").html("[New] - Chat4Friends");
-        var audio = new Audio("/res/notification_sound.mp3");
-        audio.play();
-    }
-});
-
-socket.on("is_typing", function () {
-	$(".isTyping").show();
-});
-
-socket.on("has_stopped_typing", function () {
-	$(".isTyping").hide();
-});
-
-$(document).ready(function () {
-
-	$(".logout").click(function () {
+var ControlComponent = React.createClass({
+	logout: function () {
 		makeAjaxRequest({
 			operation: "/@/logout",
 			data: {}
@@ -65,85 +8,268 @@ $(document).ready(function () {
 				return alert(err);
 			window.location = "/";
 		});
-	});
+	},
+	render: function () {
 
-	$(document).keypress(function (e) {
-		if (e.keyCode === 13) {
-			e.preventDefault();
-			sendMessage();
-		} else {
-			isTyping();
-		}
-	});
+		var self = this;
+
+		return (
+			<div className="row controlWrapper">
+				<div className="logout" onClick={self.logout}>
+					<i className="fa fa-power-off"></i>
+				</div>
+			</div>
+		);
+	}
 });
 
-// listen for window blur/focus events
-(function() {
-    var hidden = "hidden";
+var OnlineListComponent = React.createClass({
+	render: function () {
 
-    // Standards:
-    if (hidden in document)
-        document.addEventListener("visibilitychange", onchange);
-    else if ((hidden = "mozHidden") in document)
-        document.addEventListener("mozvisibilitychange", onchange);
-    else if ((hidden = "webkitHidden") in document)
-        document.addEventListener("webkitvisibilitychange", onchange);
-    else if ((hidden = "msHidden") in document)
-        document.addEventListener("msvisibilitychange", onchange);
-    // IE 9 and lower:
-    else if ("onfocusin" in document)
-        document.onfocusin = document.onfocusout = onchange;
-    // All others:
-    else
-        window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onchange;
+		var self = this;
 
-    function onchange (evt) {
-        var v = "visible", h = "hidden",
-            evtMap = {
-                focus: v, focusin:v, pageshow: v, blur: h, focusout: h, pagehide: h
-            };
+		var clients = self.props.clients;
+		var totalClients = clients.length;
 
-        evt = evt || window.event;
+		var clientJSX = clients.map(function (item, index) {
+			return (
+				<div className="userList" key={index}>
+					<div className="userItem">
+						<div className="listImg" style={{backgroundImage: "url(/imgs/" + item + ".jpg)"}}></div>
+						<span className="listUsername">{item}</span>
+						<div className="clearfix"></div>
+					</div>
+				</div>
+			);
+		});
 
-        if (evt.type in evtMap){
-            visibility = evtMap[evt.type];
-        } else {
-            visibility = this[hidden] ? "hidden" : "visible";
-        }
-        if (visibility === 'visible')
-        	$("title").html("Chat4Friends");
-    }
-
-    // set the initial state (but only if browser supports the Page Visibility API)
-    if(document[hidden] !== undefined)
-        onchange({type: document[hidden] ? "blur" : "focus"});
-})();
-
-function isTyping () {
-	if (typing === false) {
-		typing = true;
-		socket.emit("typing");
+		return (
+			<div>
+				<div className="row">
+					<div className="connectionStatus">
+						Online ({totalClients})
+					</div>
+				</div>
+				<div className="row userListWrapper">
+					{clientJSX}
+				</div>
+				<ControlComponent />
+			</div>
+		);
 	}
-	clearTimeout(typingWait);
-	typingWait = setTimeout(function () {
-		typing = false;
-		socket.emit("stopped_typing");
-	}, 3000);
-}
+});
 
-function sendMessage () {
-	var message = $(".messageTextarea").val();
+var MessageComponent = React.createClass({
+	getInitialState: function () {
+		return {
+			messages: [
+				{
+					type: "info",
+					message: "Welcome!"
+				}
+			]
+		};
+	},
+	componentWillReceiveProps: function (nextProps) {
+		var self = this;
 
-	if (!message) return;
+		// check if object is empty
+		if (Object.keys(nextProps.message).length === 0) return;
 
-	$(".messageTextarea").val("");
-	socket.emit("stopped_typing");
-	socket.emit("message", message);
-	
-	var messageHtml = "<div class='from-me'><p>" + message + "</p></div><div class='clearfix'></div>";
-	$(".well").append(messageHtml);
-	$('.well').stop().animate({scrollTop: $('.well').prop("scrollHeight")}, 0);
-}
+		var messages = self.state.messages;
+		messages.push(nextProps.message);
+		self.setState(messages);
+	},
+	componentWillUpdate: function() {
+		var node = ReactDOM.findDOMNode(this);
+		this.shouldScrollBottom = node.scrollTop + node.offsetHeight === node.scrollHeight;
+	},
+	componentDidUpdate: function() {
+		if (this.shouldScrollBottom) {
+			var node = ReactDOM.findDOMNode(this);
+			node.scrollTop = node.scrollHeight
+		}
+	},
+	render: function () {
+
+		var self = this;
+
+		var messageJSX = self.state.messages.map(function (item, index) {
+			if (item.type === "info") {
+				return (
+					<p key={index} className='info'>
+						{item.message}
+					</p>
+				);
+			} else if (item.type === "message") {
+				return (
+					<div key={index} className="messageWrapper">
+						<div className="emitter" style={{backgroundImage: "url(/imgs/" + item.emitter + ".jpg)"}}></div>
+						<div className="username">{item.emitter}</div>
+						<div className="from-them">
+							<p>{item.message}</p>
+						</div>
+						<div className="clearfix"></div>
+					</div>
+				);
+			} else if (item.type === "myMessage") {
+				return (
+					<div key={index}>
+						<div className="from-me">
+							<p>{item.message}</p>
+						</div>
+						<div className="clearfix"></div>
+					</div>
+				);
+			}
+		});
+		return (
+			<div>
+				{messageJSX}
+			</div>
+		);
+	}
+});
+
+var ChatComponent = React.createClass({
+	getInitialState: function () {
+		return {
+			clients: [],
+			newMessage: {},
+			isTyping: false,
+			typingWait: null
+		};
+	},
+	componentDidMount: function () {
+		var self = this;
+		self.socket = io();
+
+		self.socket.on("new_client", function (client) {
+			self.setState({
+				newMessage: {
+					type: "info",
+					message: (client + " connected.")
+				}
+			});
+		});
+
+		self.socket.on("client_left", function (client) {
+		    self.setState({
+				newMessage: {
+					type: "info",
+					message: (client + " left.")
+				}
+			});
+		});
+
+		self.socket.on("total_clients", function (clients) {
+			self.setState({
+				clients: clients,
+				newMessage: {}
+			});
+		});
+
+		self.socket.on("new_message", function (data) {
+			self.setState({
+				newMessage: {
+					type: "message",
+					emitter: data.emitter,
+					message: data.msg
+				}
+			});
+		});
+
+		self.socket.on("is_typing", function () {
+			self.setState({
+				isTyping: true,
+				newMessage: {}
+			})
+		});
+
+		self.socket.on("has_stopped_typing", function () {
+			self.setState({
+				isTyping: false,
+				newMessage: {}
+			})
+		});
+	},
+	sendMessage: function (textarea) {
+		var message = textarea.value;
+		if (!message) return;
+
+		var self = this;
+
+		textarea.value = "";
+
+		self.socket.emit("stopped_typing");
+		self.socket.emit("message", message);
+		self.setState({
+			newMessage: {
+				type: "myMessage",
+				message: message
+			}
+		});
+	},
+	isTyping: function (e) {
+
+		var self = this;
+
+		if (e.keyCode === 13) {
+			e.preventDefault();
+			self.sendMessage(e.target);
+		} else {
+			if (self.state.isTyping === false) {
+				self.socket.emit("typing");
+			}
+			clearTimeout(self.state.typingWait);
+			self.setState({
+				typingWait: (function (self) {
+					return setTimeout(function () {
+						self.socket.emit("stopped_typing");
+					}, 3000);
+				})(self),
+				newMessage: {}
+			});
+		}
+	},
+	render: function () {
+
+		var self = this;
+
+		return (
+			<div>
+				<div className="col-sm-4 onlineList">
+					<OnlineListComponent clients={self.state.clients} />
+				</div>
+				<div className="well messageContainer col-sm-8">
+					<MessageComponent message={self.state.newMessage} />
+				</div>
+				{ self.state.isTyping ? <i className="info isTyping">Someone is typing...</i> : null }
+				<textarea className="col-xs-12 col-sm-8 messageTextarea" placeholder="Type to chat..." onKeyDown={self.isTyping}></textarea>
+			</div>
+		);
+	}
+});
+
+var MainComponent = React.createClass({
+	render: function () {
+		return (
+			<div className="col-sm-offset-2 col-sm-8">
+				<div className="row">
+					<img src="/res/logo.png" className="logo" />
+				</div>
+				<div className="row">
+					<ChatComponent />
+				</div>
+			</div>
+		);
+	}
+});
+
+ReactDOM.render(
+	<MainComponent />,
+	document.getElementById("mainContainer")
+);
 
 function makeAjaxRequest (ajaxObj, callback) {
     $.ajax({

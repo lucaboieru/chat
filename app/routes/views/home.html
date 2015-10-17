@@ -18,51 +18,24 @@
 	<!-- Socket.io -->
 	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 
+	<!-- React JS & JSX -->
+	<script src="https://fb.me/react-0.14.0.js"></script>
+	<script src="https://fb.me/react-dom-0.14.0.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
 	<!-- JQuery -->
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
-	<!-- Custom Javascript -->
-	<script type="text/javascript" src="client.js"></script>
-
 </head>
 <body>
 	<div class="container mt-l">
-		<div class="col-sm-offset-2 col-sm-8">
-			<div class="row">
-				<img src="/res/logo.png" class="logo">
-			</div>
-			<div class="row">
-				<div class="col-sm-4 onlineList">
-					<div class="row">
-						<div class="connectionStatus">
-							Online (<span class="connectedClients"></span>)
-						</div>
-					</div>
-					<div class="row userListWrapper">
-						<div class="userList">
-							<div class="userItem userTemplate notShown">
-								<div class="listImg"></div>
-								<span class="listUsername"></span>
-								<div class="clearfix"></div>
-							</div>
-						</div>
-					</div>
-					<div class="row controlWrapper">
-						<div class="logout">
-							<i class="fa fa-power-off"></i>
-						</div>
-					</div>
-				</div>
-				<div class="well messageContainer col-sm-8">
-					<p class='info'>Welcome!</p>
-				</div>
-				<i class="info isTyping notShown">Someone is typing...</i>
-				<textarea class="col-xs-12 col-sm-8 messageTextarea" placeholder="Type to chat..."></textarea>
-			</div>
-		</div>
+		<div id="mainContainer"></div>
 	</div>
+
+	<!-- Custom Javascript -->
+	<!--<script type="text/javascript" src="client.js"></script-->
+	<script type="text/babel" src="client.js"></script>
 </body>
 </html>
